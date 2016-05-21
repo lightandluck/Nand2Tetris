@@ -67,14 +67,25 @@ CHIP ALU {
    //Use Mux and f sel to choose between AND or addition
    Mux16(a=outandxy, b=outaddxy, sel=f, out=outxy);
    
+   //Bit-wise negation
    Not16(in=outxy, out=notoutxy);
    
-   Mux16(a=outxy, b=notoutxy, sel=no, out=out);
+   //Choose between out or negation of out.
+   Mux16(a=outxy, b=notoutxy, sel=no, out=outtest);
+   And16(a=outtest, b=true, out=out);
    
+   And16(a=outtest, b=true, out[15]=msb);
    
+   //Grab most significant bit of output. If 1 then ng is negative.
+   Mux(a=false, b=true, sel=msb, out=ng);
    
+   //Use Or8Way gates to see if any 1's in out, if not then zr = 1.
+   And16(a=outtest, b=true, out[0..7]=orw1);
+   And16(a=outtest, b=true, out[8..15]=orw2);
    
-   
-   
+   Or8Way(in=orw1, out=w1);
+   Or8Way(in=orw2, out=w2);
+   Or(a=w1, b=w2, out=has1);
+   Not(in=has1, out=zr);
    
 }
