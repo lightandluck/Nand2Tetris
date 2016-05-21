@@ -44,6 +44,37 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+   
+   //Manipulates x input depending on zx sel bit
    Mux16(a=true, b=false, sel=zx, out=muxzx);
+   And16(a=x, b=muxzx, out=outzx);
+   
+   //Manipulates x input depending on nx sel bit
+   Not16(in=outzx, out=notoutzx);
+   Mux16(a=outzx, b=notoutzx, sel=nx, out=outnx);
+   
+   //Manipulates y input - zx
+   Mux16(a=true, b=false, sel=zy, out=muxzy);
+   And16(a=y, b=muxzy, out=outzy);
+   
+   //Compute bitwise-AND and addition
+   Not16(in=outzy, out=notoutzy);
+   Mux16(a=outzy, b=notoutzy, sel=ny, out=outny);
+   
+   And16(a=outnx, b=outny, out=outandxy);
+   Add16(a=outnx, b=outny, out=outaddxy);
+   
+   //Use Mux and f sel to choose between AND or addition
+   Mux16(a=outandxy, b=outaddxy, sel=f, out=outxy);
+   
+   Not16(in=outxy, out=notoutxy);
+   
+   Mux16(a=outxy, b=notoutxy, sel=no, out=out);
+   
+   
+   
+   
+   
+   
    
 }
