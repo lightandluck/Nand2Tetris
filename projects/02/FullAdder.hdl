@@ -14,7 +14,9 @@ CHIP FullAdder {
 
     PARTS:
     // Put you code here:
-    /*Not(in=c, out=notc);
+    /*
+    Naive implementation using logic gates instead of half-adder. This was informative.
+    Not(in=c, out=notc);
     
     Eqv(a=a,b=b, out=eqvab);
     And(a=eqvab, b=c, out=w1);
