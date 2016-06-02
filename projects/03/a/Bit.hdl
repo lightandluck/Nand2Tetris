@@ -14,5 +14,9 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    Mux(a=outdff, b=in, sel=load, out=muxout);
+    
+    //Using the multiple output option to create a pin that can be used as
+    //an input to the Mux 
+    DFF(in=muxout, out=out, out=outdff);
 }
