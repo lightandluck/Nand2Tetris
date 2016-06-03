@@ -15,8 +15,10 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
+    //Send load signal to addressed pin
     DMux8Way(in=load, sel=address, a=la, b=lb, c=lc, d=ld, e=le, f=lf, g=lg, h=lh);
     
+    //Load registers if corresponding load pin has been assigned.
     Register(in=in, load=la, out=outa);
     Register(in=in, load=lb, out=outb);
     Register(in=in, load=lc, out=outc);
@@ -26,5 +28,6 @@ CHIP RAM8 {
     Register(in=in, load=lg, out=outg);
     Register(in=in, load=lh, out=outh);
     
+    //Select output from registers based on address.
     Mux8Way16(a=outa, b=outb, c=outc, d=outd, e=oute, f=outf, g=outg, h=outh, sel=address, out=out);
 }

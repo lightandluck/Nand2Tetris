@@ -15,8 +15,10 @@ CHIP RAM64 {
     OUT out[16];
 
     PARTS:
+    //Use MSB 3 bits to set load to corresponding RAM8 chip
     DMux8Way(in=load, sel=address[3..5], a=la, b=lb, c=lc, d=ld, e=le, f=lf, g=lg, h=lh);
     
+    //Use LSB 3 bits to load register in corresponding RAM8 chip
     RAM8(in=in, load=la, address=address[0..2], out=outa);
     RAM8(in=in, load=lb, address=address[0..2], out=outb);
     RAM8(in=in, load=lc, address=address[0..2], out=outc);
@@ -26,6 +28,7 @@ CHIP RAM64 {
     RAM8(in=in, load=lg, address=address[0..2], out=outg);
     RAM8(in=in, load=lh, address=address[0..2], out=outh);
     
+    //Select correct RAM8 chip to output using MSB 3 bits
     Mux8Way16(a=outa, b=outb, c=outc, d=outd, e=oute, f=outf, g=outg, h=outh, sel=address[3..5], out=out);
     
 }
