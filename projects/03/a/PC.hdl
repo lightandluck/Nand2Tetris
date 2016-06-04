@@ -16,5 +16,18 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    //increments output
+    Inc16(in=clockedin, out=outinc);
+    
+    //chooses incremented value if inc is asserted
+    Mux16(a=in, b=outinc, sel=inc, out=outinc1);
+    
+    //chooses to load new value over incremented value
+    Mux16(a=outinc1, b=in, sel=load, out=outload);
+    
+    //resets to 0 if reset is asserted
+    Mux16(a=outload, b=false, sel=reset, out=outreset);
+    
+    //creates chip output and additional output to send to incrementor
+    Register(in=outreset, load=true, out=out, out=clockedin);
 }
