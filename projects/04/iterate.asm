@@ -15,16 +15,15 @@ D=D-M
 @STOP
 D;JGT
 
-@sum
-D=M
 @i
-D=D+M
+D=M
 @sum
-M=D
+M=D+M
+
 @i
 M=M+1
 @LOOP
-O;JMP
+0;JMP
 
 (STOP)
 @sum
