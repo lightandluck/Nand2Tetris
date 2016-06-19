@@ -27,5 +27,21 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    //We can use the 2 most significant bits to determine which memory chip to target. 
+    //Based on binary values and the specifications above.
+
+    //Truth Table for DMux4Way
+    // 0 | 0 | RAM
+    // 0 | 1 | RAM
+    // 1 | 0 | Screen
+    // 1 | 1 | Keyboard
+    
+    DMux4Way(in=load, sel=address[13..14], a=loadRam, b=loadRam2, c=loadScreen, d=loadKbd); 
+    Or(a=loadRam, b=loadRam2, out=loadDatRam);
+
+    RAM16K(in=in, load=loadDatRam, address=address[0..13], out=outRam);
+    Screen(in=in, load=loadScreen, address=address[0..12], out=outScreen);
+    Keyboard(out=outKbd);
+
+    Mux4Way16(a=outRam, b=outRam, c=outScreen, d=outKbd, sel=address[13..14], out=out);
 }
