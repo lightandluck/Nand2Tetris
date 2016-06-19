@@ -39,6 +39,10 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
+    Not(in=instruction[15], out=isAInstr);
+    Not(in=isAInstr, out=isCInstr);
+
+
     ALU(x=outD, y=outAM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outALU, out=outM, zr=isZero, ng=isNeg);
     
     //D-Register 
@@ -48,7 +52,9 @@ CHIP CPU {
     Mux16(a=outALU, b=instruction, sel=instruction[15], out=outForAReg);
 
     //A-Register 
-    Register(in=outForAReg, load=instruction[5], out=outA, out[0..14]=addressM);
+    And(a=isCInstr, b=instruction[5], out=cInstrLoad);
+    Or(a=isAInstr, b=cInstrLoad, out=loadA);
+    Register(in=outForAReg, load=loadA, out=outA, out[0..14]=addressM);
 
     //Mux to choose between M or A registers 
     Mux16(a=outA, b=inM, sel=instruction[12], out=outAM);
@@ -59,24 +65,24 @@ CHIP CPU {
     //As long as one passes, there is the jump.
 
     //Initial truth table
-            [2] | [1] | [0] | zr | ng
-    null     0  |  0  |  0  | -  | - 
-    -----------------------------------
-    JGT      0  |  0  |  1  | 0  | 0
-    -----------------------------------
-    JEQ      0  |  1  |  0  | 1  | 0
-    -----------------------------------
-    JGE      0  |  1  |  1  | 0  | 0
-             0  |  1  |  1  | 1  | 0
-    -----------------------------------
-    JLT      1  |  0  |  0  | 0  | 1
-    -----------------------------------
-    JNE      1  |  0  |  1  | 0  | -
-    -----------------------------------
-    JLE      1  |  1  |  0  | 1  | 0
-             1  |  1  |  0  | 0  | 1
-    -----------------------------------
-    JMP      1  |  1  |  1  | -  | -
+    //        [2] | [1] | [0] | zr | ng
+    //null     0  |  0  |  0  | -  | - 
+    //-----------------------------------
+    //JGT      0  |  0  |  1  | 0  | 0
+    //-----------------------------------
+    //JEQ      0  |  1  |  0  | 1  | 0
+    //-----------------------------------
+    //JGE      0  |  1  |  1  | 0  | 0
+    //         0  |  1  |  1  | 1  | 0
+    //-----------------------------------
+    //JLT      1  |  0  |  0  | 0  | 1
+    //-----------------------------------
+    //JNE      1  |  0  |  1  | 0  | -
+    //-----------------------------------
+    //JLE      1  |  1  |  0  | 1  | 0
+    //         1  |  1  |  0  | 0  | 1
+    //-----------------------------------
+    //JMP      1  |  1  |  1  | -  | -
 
     //Logic to increment
     Not(in=instruction[2], out=notJmp1);
