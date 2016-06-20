@@ -43,11 +43,12 @@ CHIP CPU {
     Not(in=instruction[15], out=isAInstr);
     Not(in=isAInstr, out=isCInstr);
 
+    //ALU and outputs
     ALU(x=outD, y=outAM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outALU, out=outM, zr=isZero, ng=isNeg);
-    //Register(in=outALU, load=isCInstr, out=outM);
+    
+    //Decide whether to write to M
     And(a=isCInstr, b=instruction[3], out=writeM);
     
-
     //D-Register 
     And(a=isCInstr, b=instruction[4], out=loadD);
     DRegister(in=outALU, load=loadD, out=outD);
@@ -93,9 +94,14 @@ CHIP CPU {
     Not(in=isNeg, out=ge); // out >= 0
     And(a=ge, b=notZero, out=pos); // out > 0 
 
-    And(a=instruction[0], b=pos, out=jmp0);
-    And(a=instruction[1], b=isZero, out=jmp1);
-    And(a=instruction[2], b=isNeg, out=jmp2);
+    And(a=isCInstr, b=instruction[0], out=jgt);
+    And(a=jgt, b=pos, out=jmp0);
+
+    And(a=isCInstr, b=instruction[1], out=jeq);
+    And(a=jeq, b=isZero, out=jmp1);
+
+    And(a=isCInstr, b=instruction[2], out=jlt);
+    And(a=jlt, b=isNeg, out=jmp2);
 
     Or(a=jmp0, b=jmp1, out=jmp01);
     Or(a=jmp01, b=jmp2, out=jump);
