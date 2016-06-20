@@ -39,27 +39,32 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
+    //Bits to determine if A or C instruction
     Not(in=instruction[15], out=isAInstr);
     Not(in=isAInstr, out=isCInstr);
 
-
     ALU(x=outD, y=outAM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outALU, out=outM, zr=isZero, ng=isNeg);
+    //Register(in=outALU, load=isCInstr, out=outM);
+    And(a=isCInstr, b=instruction[3], out=writeM);
     
+
     //D-Register 
-    Register(in=outALU, load=instruction[4], out=outD);
+    And(a=isCInstr, b=instruction[4], out=loadD);
+    DRegister(in=outALU, load=loadD, out=outD);
 
     //Mux to choose between ALU output or instruction from ROM
-    Mux16(a=outALU, b=instruction, sel=instruction[15], out=outForAReg);
+    Mux16(a=outALU, b=instruction, sel=isAInstr, out=outForAReg);
 
     //A-Register 
     And(a=isCInstr, b=instruction[5], out=cInstrLoad);
     Or(a=isAInstr, b=cInstrLoad, out=loadA);
-    Register(in=outForAReg, load=loadA, out=outA, out[0..14]=addressM);
+    ARegister(in=outForAReg, load=loadA, out=outA, out[0..14]=addressM);
 
     //Mux to choose between M or A registers 
-    Mux16(a=outA, b=inM, sel=instruction[12], out=outAM);
+    And(a=isCInstr, b=instruction[12], out=loadM);
+    Mux16(a=outA, b=inM, sel=loadM, out=outAM);
 
-    //Logic to select jump bits. My initial thought was to use a bunch of add gates and or everything
+    //Logic to select jump bits. My initial thought was to use a bunch of AND gates and OR everything
     //but I realized that method would be way to inefficient. Looked for help online and 
     //learn that the conditions can be evaluated separately from each other. 
     //As long as one passes, there is the jump.
@@ -84,14 +89,6 @@ CHIP CPU {
     //-----------------------------------
     //JMP      1  |  1  |  1  | -  | -
 
-    //Logic to increment
-    Not(in=instruction[2], out=notJmp1);
-    Not(in=instruction[1], out=notJmp2);
-    Not(in=instruction[0], out=notJmp3);
-
-    And(a=notJmp1, b=notJmp2, out=notJmp12);
-    And(a=notJmp12, b=notJmp3, out=doInc);
-
     Not(in=isZero, out=notZero); // out != 0
     Not(in=isNeg, out=ge); // out >= 0
     And(a=ge, b=notZero, out=pos); // out > 0 
@@ -103,8 +100,6 @@ CHIP CPU {
     Or(a=jmp0, b=jmp1, out=jmp01);
     Or(a=jmp01, b=jmp2, out=jump);
     
-    PC(in=outA, load=jump, inc=doInc, reset=reset, out[0..14]=pc);
-
-    //Not sure of most effective way to send out writeM
-    Bit(in=instruction[3], load=instruction[3], out=writeM);
+    PC(in=outA, load=jump, inc=true, reset=reset, out[0..14]=pc);
+    
 }
