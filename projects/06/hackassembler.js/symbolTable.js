@@ -30,10 +30,22 @@ var symbols = {
 
 SymbolTable = {
     contains: function(symbol) {
-        
+        return (symbols[symbol] !== undefined);
+    },
+    
+    getAddress: function(symbol) {
+        if(SymbolTable.contains(symbol)) {
+            return symbols[symbol];
+        } else {
+            return undefined;
+        }
+    },
+    
+    addEntry: function(key, value) {
+        if(!SymbolTable.contains(key)) {
+            symbols[key] = value;
+        }
     }
 };
-
-
 
 module.exports = SymbolTable;
