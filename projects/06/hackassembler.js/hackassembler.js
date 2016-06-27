@@ -2,10 +2,11 @@
 
 //grabs file name from arguments
 var readfileName = process.argv[2];
-var writeFileName = "test_output.txt";
+var writeFileName = "output.txt";
 
 const readline = require('readline');
 const fs = require('fs');
+const Parser = require('./parser.js');
 
 const rl = readline.createInterface({
     input: fs.createReadStream(readfileName)
@@ -18,8 +19,8 @@ rl.on('line', (line) => {
     //regex to detect full-line comments and blank lines  
     var re = /(\/\/.*)|(^\s*$)/gm;
     
-    if(!re.exec(line)) {
-        strNew += line.toString() + '\n';
+    if(!re.test(line)) {
+        strNew += line+ '\n';
     }
 });
 
