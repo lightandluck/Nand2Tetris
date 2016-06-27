@@ -20,7 +20,8 @@ rl.on('line', (line) => {
     var re = /(\/\/.*)|(^\s*$)/gm;
     
     if(!re.test(line)) {
-        strNew += line+ '\n';
+        var trimmedLine = line.trim();
+        strNew += line + '\n';
     }
 });
 
