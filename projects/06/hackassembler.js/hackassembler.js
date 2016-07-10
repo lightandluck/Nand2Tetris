@@ -1,15 +1,15 @@
 'use strict';
-
-//grabs file name from arguments
-var readfileName = process.argv[2];
-var writeFileName = "output.txt";
-
+const utility = require('./utility.js');
 const readline = require('readline');
 const fs = require('fs');
 const Parser = require('./parser.js');
 
+//grabs file name from arguments
+var readFileName = process.argv[2];
+var writeFileName = utility.getWriteFileName(readFileName);
+
 const rl = readline.createInterface({
-    input: fs.createReadStream(readfileName)
+    input: fs.createReadStream(readFileName)
 })
 
 var lineNumber = 0;
@@ -30,5 +30,6 @@ rl.on('close', function() {
         if (err) throw err;
     });
 });
+
 
 
