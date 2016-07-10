@@ -2,18 +2,16 @@
 
 'use strict';
 var expect = require('chai').expect;
+var SymbolTable = require('./symbolTable.js');
 
 describe('SymbolTable', function() {
-    it('should exist', function() {
-        var SymbolTable = require('./symbolTable.js');
+    it('should exist', function() {        
         expect(SymbolTable).to.not.be.undefined;
     })
 })
 
 describe('ContainsSymbol', function() {
-    it('should return boolean determining if symbol exists already', function() {
-        var SymbolTable = require('./symbolTable.js');
-        
+    it('should return boolean determining if symbol exists already', function() {        
         var input = 'R0';
         var expected = true;
         var actual = SymbolTable.contains(input);
@@ -37,9 +35,7 @@ describe('ContainsSymbol', function() {
 })
 
 describe('GetSymbol', function() {
-    it('should return symbol for label', function() {
-        var SymbolTable = require('./symbolTable.js');
-        
+    it('should return symbol for label', function() {        
         var input = 'R0';
         var expected = 0;
         var actual = SymbolTable.getAddress(input);
@@ -54,8 +50,6 @@ describe('GetSymbol', function() {
 
 describe('AddEntry', function() {
     it('should add new entry to symbol table', function() {
-        var SymbolTable = require('./symbolTable.js');
-        
         var key = 'LOOP',
             value = 16;
         

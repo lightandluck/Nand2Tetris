@@ -1,18 +1,16 @@
 //parser-spec.js
 'use strict';
 var expect = require('chai').expect;
+var Parser = require('./parser.js');
 
 describe('Parser', function() {
     it('should exist', function() {
-        var Parser = require('./parser.js');
         expect(Parser).to.not.be.undefined;
     });
 });
 
 describe('commandType', function() {
-   it('should return correct command type from line', function() {
-       var Parser = require('./parser.js');
-       
+   it('should return correct command type from line', function() {       
        var input = '@16';
        var expected = 'A_COMMAND';       
        var actual = Parser.commandType(input);
@@ -39,8 +37,6 @@ describe('commandType', function() {
 
 describe('removeInlineComments', function() {
     it('should return command with inline comments removed', function() {
-        var Parser = require('./parser.js');
-        
         var input = '@12 // this is a comment';
         var expected = '@12';
         var actual = Parser.removeComment(input);
@@ -50,11 +46,15 @@ describe('removeInlineComments', function() {
         input = 'D=M              // D = first number';
         expected = 'D=M';
         actual = Parser.removeComment(input);
-        expect(actual).to.equal(expected);
+        expect(actual, 'Did not get D=M').to.equal(expected);
         
         input = 'M+1 //hello';
         expected = 'M+1';
         actual = Parser.removeComment(input);
         expect(actual).to.equal(expected);
     })
+
+    it('should be a pending test');
 })
+
+
