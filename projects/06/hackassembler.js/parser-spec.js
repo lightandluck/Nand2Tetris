@@ -32,7 +32,7 @@ describe('commandType', function() {
        actual = Parser.commandType(input);
        expect(actual).to.equal(expected);
        
-   }) 
+   });
 });
 
 describe('removeInlineComments', function() {
@@ -52,9 +52,32 @@ describe('removeInlineComments', function() {
         expected = 'M+1';
         actual = Parser.removeComment(input);
         expect(actual).to.equal(expected);
-    })
+    });
 
     it('should be a pending test');
-})
+});
+
+describe('parseCommand', function() {
+    it('should return an array with dest, comp, jump values', function() {
+        var input = 'D=M+1';
+        var expected = {
+            'dest': 'D',
+            'comp': 'M+1',
+            'jump': 'null'
+        };
+        
+        var actual = Parser.parseCommand(input);
+        expect(actual).to.eql(expected);
+
+        input = '0;JMP';
+        expected = {
+            'dest': 'null',
+            'comp': '0',
+            'jump': 'JMP'
+        }
+        actual = Parser.parseCommand(input);
+        expect(actual).to.eql(expected);
+    });
+});
 
 

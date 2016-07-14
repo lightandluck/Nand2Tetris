@@ -22,6 +22,41 @@ Parser = {
         var re=/\/\/(.)*$/;
         var newline = line.replace(re, '').trim();
         return newline;
+    },
+
+    parseCommand: function(line) {
+        var comp = '';
+        var dest = 'null';
+        var jump = 'null';
+
+        var destMatch = line.split('=');
+        var jmpMatch;
+        //We have a dest 
+        if (destMatch.length > 1) {
+            dest = destMatch[0];
+            //look for comp and jump
+            jmpMatch = destMatch[1].split(';');
+            comp = jmpMatch[0];
+            if(jmpMatch[1]) jump = jmpMatch[1];
+        }
+
+        //Just have a comp and jump
+        else {
+            jmpMatch = line.split(';');
+            comp = jmpMatch[0];
+            if(jmpMatch[1]) jump = jmpMatch[1];
+        }
+
+        var component = {
+            'dest': 'null',
+            'comp': '',
+            'jump': 'null'
+        };
+        component['dest'] = dest;
+        component['comp'] = comp;
+        component['jump'] = jump;
+
+        return component;
     }
 };
 
