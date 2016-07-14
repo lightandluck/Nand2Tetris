@@ -2,7 +2,7 @@
 'use strict';
 
 var Parser;
-
+var Code = require('./code.js');
 Parser = {
     commandType: function (line) {
         //check for A command by looking for '@' at beginning of line.
@@ -24,9 +24,9 @@ Parser = {
         return newline;
     },
 
-    parseCommand: function(line) {
-        var comp = '';
+    parseCCommand: function(line) {
         var dest = 'null';
+        var comp = '';        
         var jump = 'null';
 
         var destMatch = line.split('=');
@@ -48,15 +48,34 @@ Parser = {
         }
 
         var component = {
-            'dest': 'null',
-            'comp': '',
-            'jump': 'null'
-        };
-        component['dest'] = dest;
-        component['comp'] = comp;
-        component['jump'] = jump;
+            'dest': dest,
+            'comp': comp,
+            'jump': jump
+        };        
 
         return component;
+    },
+
+    parseACommand: function(line) {
+        var match = line.split('@');
+        if (match.length > 1) {
+            return match[1];
+        }
+        return '';
+    },
+
+    getBinaryACommand: function(line) {
+        var value = this.parseACommand(line);
+        return Code.createBinaryString(value);
+    },
+
+    getBinaryCCommand: function(line) {
+        var values = this.parseCCommand(line);
+        return ['111',                
+                Code.getComp(values['comp']),
+                Code.getDest(values['dest']),
+                Code.getJmp(values['jump']),
+        ].join('');
     }
 };
 
