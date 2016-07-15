@@ -20,8 +20,15 @@ rl.on('line', (line) => {
     var re = /(\/\/.*)|(^\s*$)/gm;
     
     if(!re.test(line)) {
-        var trimmedLine = line.trim();
-        strNew += line + '\n';
+        var commandType = Parser.commandType(line);
+        var binaryCommand = '';
+        if(commandType === 'A_COMMAND') {
+            binaryCommand = Parser.getBinaryACommand(line.trim());
+        } else if (commandType === 'C_COMMAND') {
+            binaryCommand = Parser.getBinaryCCommand(line.trim());
+        }
+        
+        strNew += binaryCommand + '\n';
     }
 });
 
