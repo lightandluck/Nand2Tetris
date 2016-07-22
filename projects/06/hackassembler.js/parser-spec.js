@@ -135,4 +135,13 @@ describe('getBinaryCCommand', function() {
     });
 });
 
+describe('parseLCommand', function() {
+    it('should return symbol between parentheses in L Command', function() {
+        var input = '(LOOP)';
+        var expected = 'LOOP';
+        var actual = Parser.parseLCommand(input);
+        expect(actual).to.equal(expected);
+    })
+})
+
 

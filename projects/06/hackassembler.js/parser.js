@@ -64,6 +64,15 @@ Parser = {
         return '';
     },
 
+    parseLCommand: function(line) {
+        var re = /\((.*?)\)/;
+        var match = re.exec(line);
+        if (match.length > 1) {
+            return match[1];
+        }
+        return '';
+    },
+
     getBinaryACommand: function(line) {
         var value = this.parseACommand(line);
         return Code.createBinaryString(value);
