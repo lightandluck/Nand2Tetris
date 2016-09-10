@@ -2,6 +2,7 @@
 'use strict';
 
 var SymbolTable;
+//key-value table holding symbol representations
 var symbols = {
     R0: 0,
     R1: 1,

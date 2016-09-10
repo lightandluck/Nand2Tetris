@@ -13,7 +13,8 @@ var Readable = require('stream').Readable;
 var readFileName = process.argv[2];
 var writeFileName = utility.getWriteFileName(readFileName);
 
-var lineNumber = 0;
+
+var lineNumber = 0; //Counter to keep track of what line number we are on, used so that labels specify correct line
 var symbolNumber = 16;  //First location to assign as address for variables
 var strNoLabels = '';   //For first pass to remove labels
 var strNoSymbols = '';    //For second pass to replace symbols
@@ -28,11 +29,15 @@ rl.on('line', (line) => {
     //regex to detect full-line comments and blank lines
     var re = /(^\/\/.*)|(^\s*$)/gm;
 
-    if(!re.test(line)) {
+    if(!re.test(line)) { //Not a comment, do stuff
+
         var cleanLine = Parser.removeComment(line).trim();
         var commandType = Parser.commandType(cleanLine);
 
+        //if the line is not a label, 
         if (commandType !== 'L_COMMAND') {
+            //Instructions are 0-based, incrementing here will put
+            //the labels at the correct numbered position
             lineNumber++;
             strNoLabels += cleanLine + '\n';
         } else {
@@ -45,7 +50,7 @@ rl.on('line', (line) => {
 });
 
 rl.on('close', function() {
-    //creates stream to pass to next pass
+    //creates stream to pass to next pass through instructions
     var streamNoLabels = new Readable;
     streamNoLabels.push(strNoLabels.trim());
     streamNoLabels.push(null);
@@ -61,10 +66,15 @@ rl.on('close', function() {
         var commandType = Parser.commandType(line);    
         if (commandType === 'A_COMMAND') {
             var aSymbol = Parser.parseACommand(line);
+            //check if A-command is a symbol or number
+
             if (isNaN(aSymbol)) {
+                //We're looking at a symbol like @R0, 
+
+                //Check if symbol already exists, usually for predefined symbols
                 if (SymbolTable.contains(aSymbol)) {
                     newline = '@' + SymbolTable.getAddress(aSymbol);                
-                } else {
+                } else { //change add to symbol table new variables
                     newline = '@' + symbolNumber;
                     SymbolTable.addEntry (aSymbol, symbolNumber++);
                 }
@@ -108,21 +118,3 @@ rl.on('close', function() {
         });        
     });    
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

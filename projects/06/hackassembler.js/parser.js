@@ -24,6 +24,7 @@ Parser = {
         return newline;
     },
 
+    //accepts C-command as string and returns array with instruction components: dest, comp, jump
     parseCCommand: function(line) {
         var dest = 'null';
         var comp = '';        
@@ -56,6 +57,7 @@ Parser = {
         return component;
     },
 
+    //grabs number after @ symbol
     parseACommand: function(line) {
         var match = line.split('@');
         if (match.length > 1) {
@@ -64,6 +66,7 @@ Parser = {
         return '';
     },
 
+    //grabs symbol of label between parentheses
     parseLCommand: function(line) {
         var re = /\((.*?)\)/;
         var match = re.exec(line);
