@@ -24,39 +24,18 @@ const rl = readline.createInterface({
     input: fs.createReadStream(readFileName)
 });
 
+
+var firstPass = runFirstPass();
+
 //First pass to assign values to Labels and remove them.
 rl.on('line', (line) => {
-    //regex to detect full-line comments and blank lines
-    var re = /(^\/\/.*)|(^\s*$)/gm;
-
-    if(!re.test(line)) { //Not a comment, do stuff
-
-        var cleanLine = Parser.removeComment(line).trim();
-        var commandType = Parser.commandType(cleanLine);
-
-        //if the line is not a label, 
-        if (commandType !== 'L_COMMAND') {
-            //Instructions are 0-based, incrementing here will put
-            //the labels at the correct numbered position
-            lineNumber++;
-            strNoLabels += cleanLine + '\n';
-        } else {
-            var lSymbol = Parser.parseLCommand(cleanLine);
-            if (!SymbolTable.contains(lSymbol)) {
-                SymbolTable.addEntry (lSymbol, lineNumber);                
-            } 
-        }
-    }
+    firstPass.parseLine(line);
 });
 
 rl.on('close', function() {
-    //creates stream to pass to next pass through instructions
-    var streamNoLabels = new Readable;
-    streamNoLabels.push(strNoLabels.trim());
-    streamNoLabels.push(null);
-
+    
     const rl2 = readline.createInterface({
-        input: streamNoLabels
+        input: getReadable(firstPass.getString())
     })
 
     //Second pass - to replace symbols with numbers
@@ -69,8 +48,7 @@ rl.on('close', function() {
             //check if A-command is a symbol or number
 
             if (isNaN(aSymbol)) {
-                //We're looking at a symbol like @R0, 
-
+                //We're looking at a symbol like @R0,
                 //Check if symbol already exists, usually for predefined symbols
                 if (SymbolTable.contains(aSymbol)) {
                     newline = '@' + SymbolTable.getAddress(aSymbol);                
@@ -118,3 +96,48 @@ rl.on('close', function() {
         });        
     });    
 });
+
+function getReadable(str) {
+    //creates stream to pass to next pass through instructions
+    var stream = new Readable;
+    stream.push(str);
+    stream.push(null);
+
+    return stream;
+}
+function runFirstPass() {
+    var re = /(^\/\/.*)|(^\s*$)/gm;
+    var lineNumber = 0; //Counter to keep track of what line number we are on, used so that labels specify correct line
+    var strNoLabels = '';
+
+    return {
+        parseLine: function(line) {
+            if(!re.test(line)) { //Not a comment, do stuff
+
+                var cleanLine = Parser.removeComment(line).trim();
+                var commandType = Parser.commandType(cleanLine);
+
+                //if the line is not a label, 
+                if (commandType !== 'L_COMMAND') {
+                    //Instructions are 0-based, incrementing here will put
+                    //the labels at the correct numbered position
+                    lineNumber++;
+                    strNoLabels += cleanLine + '\n';
+                } else {
+                    var lSymbol = Parser.parseLCommand(cleanLine);
+                    if (!SymbolTable.contains(lSymbol)) {
+                        SymbolTable.addEntry (lSymbol, lineNumber);                
+                    } 
+                }
+            }
+        },
+        getString: function() {
+            return strNoLabels;
+        }
+    } 
+}
+
+function runSecondPass() {
+
+}
+
