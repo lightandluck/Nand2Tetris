@@ -36,17 +36,17 @@ Parser = {
         if (destMatch.length > 1) {
             dest = destMatch[0];
             //look for comp and jump
-            jmpMatch = destMatch[1].split(';');
-            comp = jmpMatch[0];
-            if(jmpMatch[1]) jump = jmpMatch[1];
+            jmpMatch = destMatch[1].split(';');            
         }
 
         //Just have a comp and jump
         else {
-            jmpMatch = line.split(';');
-            comp = jmpMatch[0];
-            if(jmpMatch[1]) jump = jmpMatch[1];
+            jmpMatch = line.split(';');            
         }
+
+        //assign comp and jump from array
+        comp = jmpMatch[0];
+        if(jmpMatch[1]) jump = jmpMatch[1];
 
         var component = {
             'dest': dest,
